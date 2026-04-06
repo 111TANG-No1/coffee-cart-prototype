@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>极速咖啡车 - 预定小程序原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 隐藏滚动条 */
+        ::-webkit-scrollbar { display: none; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-200 flex justify-center items-center min-h-screen py-8">
+
+    <div class="w-[390px] h-[844px] bg-gray-50 rounded-[40px] shadow-2xl relative overflow-hidden border-[8px] border-gray-800">
+        
+        <div id="view-home" class="h-full flex flex-col fade-in">
+            <div class="bg-[#6F4E37] text-white px-5 pt-12 pb-4 rounded-b-2xl shadow-md">
+                <p class="text-sm opacity-80">当前位置</p>
+                <h1 class="text-lg font-bold flex items-center mt-1">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    东北师大附中（自由校区）正门
+                </h1>
+            </div>
+
+            <div class="p-5">
+                <div class="bg-orange-100 rounded-xl p-4 border border-orange-200">
+                    <h2 class="text-orange-800 font-bold text-lg">课间 10 分钟？</h2>
+                    <p class="text-orange-600 text-sm mt-1">提前预定错峰制作，下课即拿不排队！</p>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-5 pb-24">
+                <h3 class="font-bold text-gray-800 mb-4 text-lg">今日供应</h3>
+                
+                <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3">
+                    <div>
+                        <h4 class="font-bold text-gray-800">冰美式</h4>
+                        <p class="text-xs text-gray-500 mt-1">提神首选，极速出杯</p>
+                        <p class="text-[#6F4E37] font-bold mt-2">¥ 9.9</p>
+                    </div>
+                    <button onclick="goToOrder('冰美式', 9.9)" class="bg-[#6F4E37] text-white px-4 py-2 rounded-full text-sm font-bold shadow-md active:scale-95 transition-transform">预定</button>
+                </div>
+
+                <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3">
+                    <div>
+                        <h4 class="font-bold text-gray-800">蜂蜜咖啡</h4>
+                        <p class="text-xs text-gray-500 mt-1">温润口感，清甜能量</p>
+                        <p class="text-[#6F4E37] font-bold mt-2">¥ 19.9</p>
+                    </div>
+                    <button onclick="goToOrder('蜂蜜咖啡', 19.9)" class="bg-[#6F4E37] text-white px-4 py-2 rounded-full text-sm font-bold shadow-md active:scale-95 transition-transform">预定</button>
+                </div>
+
+                <div class="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm mb-3">
+                    <div>
+                        <h4 class="font-bold text-gray-800">香蕉巧克力冰沙</h4>
+                        <p class="text-xs text-gray-500 mt-1">饱腹感满分，解压甜品</p>
+                        <p class="text-[#6F4E37] font-bold mt-2">¥ 19.9</p>
+                    </div>
+                    <button onclick="goToOrder('香蕉巧克力冰沙', 19.9)" class="bg-[#6F4E37] text-white px-4 py-2 rounded-full text-sm font-bold shadow-md active:scale-95 transition-transform">预定</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-order" class="h-full flex flex-col hidden bg-gray-50 fade-in">
+            <div class="pt-12 pb-4 px-5 bg-white flex items-center shadow-sm">
+                <button onclick="switchView('view-home')" class="text-gray-800 p-2 -ml-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <h1 class="text-lg font-bold ml-2">确认订单</h1>
+            </div>
+
+            <div class="p-5 flex-1">
+                <div class="bg-white p-5 rounded-xl shadow-sm mb-6">
+                    <div class="flex justify-between items-center">
+                        <h2 id="order-item-name" class="font-bold text-gray-800 text-lg">商品名称</h2>
+                        <span id="order-item-price" class="text-[#6F4E37] font-bold text-lg">¥ 0</span>
+                    </div>
+                </div>
+
+                <h3 class="font-bold text-gray-800 mb-2">预约课间取餐时间</h3>
+                <p class="text-xs text-gray-500 mb-4">我们将根据您的时间提前制作，确保口感且不排队</p>
+                
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="selectTime(this)" class="time-btn bg-white border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-bold transition-colors">10:05</button>
+                    <button onclick="selectTime(this)" class="time-btn bg-white border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-bold transition-colors">10:10</button>
+                    <button onclick="selectTime(this)" class="time-btn bg-white border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-bold transition-colors">10:15</button>
+                    <button onclick="selectTime(this)" class="time-btn bg-white border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-bold transition-colors">15:55</button>
+                    <button onclick="selectTime(this)" class="time-btn bg-white border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-bold transition-colors">16:00</button>
+                    <button onclick="selectTime(this)" class="time-btn bg-white border-2 border-gray-200 text-gray-700 py-3 rounded-xl font-bold transition-colors">16:05</button>
+                </div>
+            </div>
+
+            <div class="bg-white border-t border-gray-200 p-5 pb-8 flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-gray-500">合计</p>
+                    <p id="total-price" class="text-2xl text-[#6F4E37] font-bold mt-1">¥ 0</p>
+                </div>
+                <button id="pay-btn" onclick="mockPay()" class="bg-gray-300 text-gray-500 px-8 py-3 rounded-full font-bold shadow-md transition-colors pointer-events-none">请选择时间</button>
+            </div>
+        </div>
+
+        <div id="view-success" class="h-full flex flex-col hidden bg-[#6F4E37] fade-in">
+            <div class="flex-1 flex flex-col items-center justify-center p-8">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-[#6F4E37]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h1 class="text-white font-bold text-2xl mb-2">订单已确认</h1>
+                <p class="text-white opacity-80 text-sm mb-10 text-center">咖啡师将按时为您制作<br>请凭取餐码前往正门提取</p>
+                
+                <div class="bg-white w-full rounded-2xl p-8 flex flex-col items-center shadow-lg relative">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-full flex justify-between px-4">
+                        <div class="w-6 h-6 rounded-full bg-[#6F4E37]"></div>
+                        <div class="w-6 h-6 rounded-full bg-[#6F4E37]"></div>
+                    </div>
+                    
+                    <p class="text-gray-500 text-sm mb-2">您的取餐码</p>
+                    <h2 class="text-5xl font-black text-gray-800 tracking-wider">A032</h2>
+                    <div class="w-full h-px border-t border-dashed border-gray-300 my-6"></div>
+                    <p id="pickup-time-display" class="text-lg font-bold text-[#6F4E37]"></p>
+                    <p class="text-xs text-gray-400 mt-2">建议距取餐前 3 分钟从教室出发</p>
+                </div>
+            </div>
+            
+            <div class="p-8 pb-12">
+                <button onclick="switchView('view-home')" class="w-full bg-white text-[#6F4E37] py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform">返回首页</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentPrice = 0;
+        let selectedTimeText = '';
+
+        function switchView(viewId) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-order').classList.add('hidden');
+            document.getElementById('view-success').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function goToOrder(name, price) {
+            document.getElementById('order-item-name').innerText = name;
+            document.getElementById('order-item-price').innerText = '¥ ' + price;
+            document.getElementById('total-price').innerText = '¥ ' + price;
+            
+            // 重置时间选择器状态
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.classList.remove('border-[#6F4E37]', 'text-[#6F4E37]', 'bg-orange-50');
+            });
+            const payBtn = document.getElementById('pay-btn');
+            payBtn.innerText = '请选择时间';
+            payBtn.classList.remove('bg-[#6F4E37]', 'text-white', 'pointer-events-auto');
+            payBtn.classList.add('bg-gray-300', 'text-gray-500', 'pointer-events-none');
+            
+            switchView('view-order');
+        }
+
+        function selectTime(btn) {
+            // 清除其他按钮的高亮
+            document.querySelectorAll('.time-btn').forEach(b => {
+                b.classList.remove('border-[#6F4E37]', 'text-[#6F4E37]', 'bg-orange-50');
+            });
+            // 高亮当前按钮
+            btn.classList.add('border-[#6F4E37]', 'text-[#6F4E37]', 'bg-orange-50');
+            selectedTimeText = btn.innerText;
+            
+            // 激活支付按钮
+            const payBtn = document.getElementById('pay-btn');
+            payBtn.innerText = '确认微信支付';
+            payBtn.classList.remove('bg-gray-300', 'text-gray-500', 'pointer-events-none');
+            payBtn.classList.add('bg-[#1AAD19]', 'text-white', 'pointer-events-auto'); // 微信绿
+        }
+
+        function mockPay() {
+            const payBtn = document.getElementById('pay-btn');
+            payBtn.innerText = '支付中...';
+            payBtn.classList.add('opacity-70');
+            
+            setTimeout(() => {
+                document.getElementById('pickup-time-display').innerText = '预约取餐时间：' + selectedTimeText;
+                switchView('view-success');
+            }, 800);
+        }
+    </script>
+</body>
+</html>
